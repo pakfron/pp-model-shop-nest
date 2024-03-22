@@ -1,15 +1,21 @@
-import { Column, Entity, PrimaryColumn, Unique } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 
-// export enum UserRole {
-//   ADMIN = 'admin',
-//   USER = 'user',
-// }
+export enum UserRole {
+  ADMIN = 'admin',
+  USER = 'user',
+}
 
 @Unique(['username'])
 @Unique(['email'])
 @Entity()
 export class User {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ name: 'username' })
@@ -18,7 +24,11 @@ export class User {
   @Column()
   password: string;
   @Column({ name: 'email' })
-  email:string
-  @Column()
-  role:string;
+  email: string;
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.USER,
+  })
+  role: UserRole;
 }
