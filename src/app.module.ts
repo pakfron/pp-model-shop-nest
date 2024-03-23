@@ -6,6 +6,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/user.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
+import { JwtModule } from '@nestjs/jwt';
+import { config } from 'dotenv';
+import { jwtConstants } from './users/auth.constants';
 
 @Module({
   imports: [
@@ -29,6 +32,11 @@ import { APP_PIPE } from '@nestjs/core';
       },
     }),
     UserModule,
+    JwtModule.register({
+      global: true,
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: '7d' },
+    }),
   ],
   controllers: [AppController],
   providers: [

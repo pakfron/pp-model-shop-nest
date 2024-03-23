@@ -2,7 +2,7 @@
 /dist
 /node_modules
 /build
-
+auth.constants.ts
 .env.development
 # Logs
 logs

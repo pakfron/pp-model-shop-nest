@@ -4,10 +4,14 @@ import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dtos/createUser';
-
+import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private jwtService: JwtService,
+  ) {}
   async signup({ email, password, confirmPassword, username }: CreateUserDto) {
     if (password !== confirmPassword) {
       throw new BadRequestException('password is not match');
@@ -20,6 +24,18 @@ export class AuthService {
     if (emailDup) {
       throw new BadRequestException('email already exists');
     }
-    return this.userService.createUser(username, password, email);
+
+    const salt = 10;
+    const hash = await bcrypt.hash(password, salt);
+
+    const user = await this.userService.createUser(username, hash, email);
+
+    const payload = { userId: user.id, role: user.role };
+
+    return {
+      acess_token: await this.jwtService.signAsync(payload),
+      userId:user.id,
+      role:user.role
+    };
   }
 }
