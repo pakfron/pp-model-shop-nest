@@ -11,6 +11,8 @@ import { config } from 'dotenv';
 import { jwtConstants } from './users/auth.constants';
 import { authGuard } from './users/auth.guard';
 import { ProductsModule } from './products/products.module';
+import { CartsModule } from './carts/carts.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { ProductsModule } from './products/products.module';
       signOptions: { expiresIn: '7d' },
     }),
     ProductsModule,
+    CartsModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [
