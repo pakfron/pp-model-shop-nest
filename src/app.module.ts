@@ -5,10 +5,12 @@ import { UserModule } from './users/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/user.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_PIPE } from '@nestjs/core';
+import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { config } from 'dotenv';
 import { jwtConstants } from './users/auth.constants';
+import { authGuard } from './users/auth.guard';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -37,6 +39,7 @@ import { jwtConstants } from './users/auth.constants';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '7d' },
     }),
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [
@@ -47,6 +50,10 @@ import { jwtConstants } from './users/auth.constants';
         whitelist: true,
       }),
     },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass:authGuard
+    // },
   ],
 })
 export class AppModule {}

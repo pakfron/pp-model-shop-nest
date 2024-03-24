@@ -1,4 +1,10 @@
-import { BadRequestException, Body, Injectable, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Injectable,
+  Post,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
@@ -33,9 +39,24 @@ export class AuthService {
     const payload = { userId: user.id, role: user.role };
 
     return {
-      acess_token: await this.jwtService.signAsync(payload),
-      userId:user.id,
-      role:user.role
+      access_token: await this.jwtService.signAsync(payload),
+      userId: user.id,
+      role: user.role,
+    };
+  }
+
+  async signin(email: string, password: string) {
+    const user = await this.userService.findEmail(email);
+    // return user
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      throw new UnauthorizedException();
+    }
+    const payload = { userId: user.id, role: user.role };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+      userId: user.id,
+      role: user.role,
     };
   }
 }
